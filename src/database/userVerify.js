@@ -11,6 +11,6 @@ const Schema = new mongoose.Schema({
     Email: String
 });
 
-const model = mongoose.models.userVerify || mongoose.model('userVerify', Schema);
+const model = mongoose.model('tadcverify', Schema);
 
 module.exports = model;
