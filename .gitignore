@@ -1,0 +1,8 @@
+*.env*
+*node_modules*
+*.vscode*
+*package-lock.json*
+*cooldowns.json*
+*vscode-profile*
+src/JSON/cooldowns.json
+src\JSON\cooldowns.json
