@@ -1,12 +1,15 @@
-const model = require("../../database/userVerify.js")
-const Discord = require("dicord.js")
+const model = require("../../database/userVerify.js");
+const Discord = require("dicord.js");
+
 module.exports = async (client, interaction) => {
     const user = interaction.options.getUser("user");
     const data = await model.findOne({ User: user.id });
     let embed;
-    
-if (data.Note) {
+        if (!data || !data.Note || data.Note == []) {
 
+        }   
+
+if (data.Note) {
     const fields = [];
     for (note of data.Note) {
         const m = data.Note.Message;
