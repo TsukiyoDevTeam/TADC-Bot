@@ -5,9 +5,8 @@ const path = require("node:path");
 
 module.exports = async (client) => {
 	//----------------------------------------------------------------//
-	//                         Permissions                            //
+	//                           Utility                              //
 	//----------------------------------------------------------------//
-
 	client.loadSubcommands = async (client, interaction, args) => {
 		try {
 			return require(
@@ -23,240 +22,7 @@ module.exports = async (client) => {
 			});
 		}
 	};
-
-	client.createLeaderboard = async (title, lb, interaction) => {
-		if (!title) {
-			const title = "Private Notes View";
-			interaction
-				.reply({
-					embeds: [await client.generateEmbed(0, 0, lb, title, interaction)],
-					ephemeral: true,
-				})
-				.then(async (msg) => {
-					if (lb.length <= 10) return;
-
-					const button1 = new Discord.ButtonBuilder()
-						.setCustomId("back_button")
-						.setEmoji("⬅️")
-						.setStyle(Discord.ButtonStyle.Secondary)
-						.setDisabled(true);
-
-					const button2 = new Discord.ButtonBuilder()
-						.setCustomId("forward_button")
-						.setEmoji("➡️")
-						.setStyle(Discord.ButtonStyle.Secondary);
-
-					const row = new Discord.ActionRowBuilder().addComponents(
-						button1,
-						button2,
-					);
-
-					msg.edit({
-						embeds: [await client.generateEmbed(0, 0, lb, title, interaction)],
-						components: [row],
-					});
-
-					let currentIndex = 0;
-					const collector = interaction.channel.createMessageComponentCollector(
-						{ componentType: Discord.ComponentType.Button, time: 60000 },
-					);
-
-					collector.on("collect", async (btn) => {
-						if (
-							btn.user.id === interaction.user.id &&
-							btn.message.id === msg.id
-						) {
-							btn.customId === "back_button"
-								? (currentIndex -= 10)
-								: (currentIndex += 10);
-
-							const btn1 = new Discord.ButtonBuilder()
-								.setCustomId("back_button")
-								.setEmoji("⬅️")
-								.setStyle(Discord.ButtonStyle.Secondary)
-								.setDisabled(true);
-
-							const btn2 = new Discord.ButtonBuilder()
-								.setCustomId("forward_button")
-								.setEmoji("➡️")
-								.setStyle(Discord.ButtonStyle.Secondary)
-								.setDisabled(true);
-
-							if (currentIndex !== 0) btn1.setDisabled(false);
-							if (currentIndex + 10 < lb.length) btn2.setDisabled(false);
-
-							const row2 = new Discord.ActionRowBuilder().addComponents(
-								btn1,
-								btn2,
-							);
-
-							msg.edit({
-								embeds: [
-									await client.generateEmbed(
-										currentIndex,
-										currentIndex,
-										lb,
-										title,
-										interaction,
-									),
-								],
-								components: [row2],
-							});
-							btn.deferUpdate();
-						}
-					});
-
-					collector.on("end", async (btn) => {
-						const btn1Disable = new Discord.ButtonBuilder()
-							.setCustomId("back_button")
-							.setEmoji("⬅️")
-							.setStyle(Discord.ButtonStyle.Secondary)
-							.setDisabled(true);
-
-						const btn2Disable = new Discord.ButtonBuilder()
-							.setCustomId("forward_button")
-							.setEmoji("➡️")
-							.setStyle(Discord.ButtonStyle.Secondary)
-							.setDisabled(true);
-
-						const rowDisable = new Discord.ActionRowBuilder().addComponents(
-							btn1Disable,
-							btn2Disable,
-						);
-
-						msg.edit({
-							embeds: [
-								await client.generateEmbed(
-									currentIndex,
-									currentIndex,
-									lb,
-									title,
-									interaction,
-								),
-							],
-							components: [rowDisable],
-						});
-					});
-				});
-		} else {
-			interaction
-				.editReply({
-					embeds: [await client.generateEmbed(0, 0, lb, title, interaction)],
-					fetchReply: true,
-				})
-				.then(async (msg) => {
-					if (lb.length <= 10) return;
-
-					const button1 = new Discord.ButtonBuilder()
-						.setCustomId("back_button")
-						.setEmoji("⬅️")
-						.setStyle(Discord.ButtonStyle.Secondary)
-						.setDisabled(true);
-
-					const button2 = new Discord.ButtonBuilder()
-						.setCustomId("forward_button")
-						.setEmoji("➡️")
-						.setStyle(Discord.ButtonStyle.Secondary);
-
-					const row = new Discord.ActionRowBuilder().addComponents(
-						button1,
-						button2,
-					);
-
-					msg.edit({
-						embeds: [await client.generateEmbed(0, 0, lb, title, interaction)],
-						components: [row],
-					});
-
-					let currentIndex = 0;
-					const collector = interaction.channel.createMessageComponentCollector(
-						{ componentType: Discord.ComponentType.Button, time: 60000 },
-					);
-
-					collector.on("collect", async (btn) => {
-						if (
-							btn.user.id === interaction.user.id &&
-							btn.message.id === msg.id
-						) {
-							btn.customId === "back_button"
-								? (currentIndex -= 10)
-								: (currentIndex += 10);
-
-							const btn1 = new Discord.ButtonBuilder()
-								.setCustomId("back_button")
-								.setEmoji("⬅️")
-								.setStyle(Discord.ButtonStyle.Secondary)
-								.setDisabled(true);
-
-							const btn2 = new Discord.ButtonBuilder()
-								.setCustomId("forward_button")
-								.setEmoji("➡️")
-								.setStyle(Discord.ButtonStyle.Secondary)
-								.setDisabled(true);
-
-							if (currentIndex !== 0) btn1.setDisabled(false);
-							if (currentIndex + 10 < lb.length) btn2.setDisabled(false);
-
-							const row2 = new Discord.ActionRowBuilder().addComponents(
-								btn1,
-								btn2,
-							);
-
-							msg.edit({
-								embeds: [
-									await client.generateEmbed(
-										currentIndex,
-										currentIndex,
-										lb,
-										title,
-										interaction,
-									),
-								],
-								components: [row2],
-							});
-							btn.deferUpdate();
-						}
-					});
-
-					collector.on("end", async (btn) => {
-						const btn1Disable = new Discord.ButtonBuilder()
-							.setCustomId("back_button")
-							.setEmoji("⬅️")
-							.setStyle(Discord.ButtonStyle.Secondary)
-							.setDisabled(true);
-
-						const btn2Disable = new Discord.ButtonBuilder()
-							.setCustomId("forward_button")
-							.setEmoji("➡️")
-							.setStyle(Discord.ButtonStyle.Secondary)
-							.setDisabled(true);
-
-						const rowDisable = new Discord.ActionRowBuilder().addComponents(
-							btn1Disable,
-							btn2Disable,
-						);
-
-						msg.edit({
-							embeds: [
-								await client.generateEmbed(
-									currentIndex,
-									currentIndex,
-									lb,
-									title,
-									interaction,
-								),
-							],
-							components: [rowDisable],
-						});
-					});
-				});
-		}
-	};
-
-	//----------------------------------------------------------------//
-	//                         Miscellaneous                          //
-	//----------------------------------------------------------------//
-
+//                        ===================
 	client.getInvite = async function getInvite(interaction) {
 		const guildInvites = await interaction.guild.invites.fetch();
 		let invite;
@@ -265,18 +31,14 @@ module.exports = async (client) => {
 		);
 
 		if (botInvites.size > 0) {
-			// Check if any of the bot's invites has indefinite max age
 			const indefiniteInvite = botInvites.find((inv) => inv.maxAge === 0);
 
 			if (indefiniteInvite) {
-				// If there's an invite with indefinite max age, use it
 				invite = indefiniteInvite;
 			} else {
-				// Use the first bot invite if none have indefinite max age
 				invite = botInvites.first();
 			}
 		} else {
-			// If the bot does not have an invite in the guild, create a new one for any text channel in the guild
 			const textChannel = interaction.guild.channels.cache.find(
 				(channel) => channel.type === Discord.ChannelType.GuildText,
 			);
@@ -361,7 +123,7 @@ module.exports = async (client) => {
 					.setColor("#ED4245")
 					.setFooter(client.footer());
 
-				return cooldownEmbed; // Return the embed with cooldown details
+				return cooldownEmbed;
 			}
 
 			const response = {
@@ -582,7 +344,7 @@ module.exports = async (client) => {
 			if (interaction.replied && interaction.ephemeral === true) {
 				return "editReply";
 			}
-			return "editReply"; // Default to edit reply if unsure
+			return "editReply";
 		}
 		if (!interaction.replied && interaction.ephemeral === null) {
 			return "ephemeral";
@@ -602,14 +364,14 @@ module.exports = async (client) => {
 		if (interaction.replied && interaction.ephemeral === true) {
 			return "ephemeraledit";
 		}
-		return "editReply"; // Default to edit reply if unsure
+		return "editReply"; 
 	}
 	// =========================================================================
 
 	client.formatTime = function formatTime(time) {
 		const hours = Math.floor(time / 3600);
 		const minutes = Math.floor((time % 3600) / 60);
-		const seconds = (time % 60).toFixed(1); // keep one decimal place for seconds
+		const seconds = (time % 60).toFixed(1);
 
 		let formattedTime = "";
 		if (hours > 0) {
@@ -689,19 +451,16 @@ module.exports = async (client) => {
 				case "video/webm":
 					return "webm";
 
-				// Add more cases for other supported image and video types if needed
-
 				default:
-					// Handle other content types if needed
 					return null;
 			}
 		}
 	};
-
+//                        ===================
 	client.delay = function delay(ms) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	};
-
+//                        ===================
 	client.percentageBar = (curr, full, type) => {
 		if (full <= 0) return "Error: Full value must be greater than 0.";
 		if (curr < 0)
@@ -727,7 +486,7 @@ module.exports = async (client) => {
 				return `${bar}\n${percentage}`;
 		}
 	};
-
+//                        ===================
 	const version = require("../../../package.json").version;
 	client.footer = (msg) => {
 		if (msg) {
@@ -741,10 +500,10 @@ module.exports = async (client) => {
 			iconURL:'https://raw.githubusercontent.com/Dreamwxve/Dreamwxve/refs/heads/main/watermarked-d-circle.png'
 		}
 	};
-
+//                        ===================
 	client.advTime = async (ms, format = "readable") => {
-		const now = Math.floor(Date.now() / 1000); // Current Unix timestamp in seconds
-		const futureTimestamp = Math.floor((Date.now() + ms) / 1000); // Future Unix timestamp in seconds
+		const now = Math.floor(Date.now() / 1000);
+		const futureTimestamp = Math.floor((Date.now() + ms) / 1000);
 
 		const hours = Math.floor(ms / (1000 * 60 * 60));
 		const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
@@ -772,13 +531,13 @@ module.exports = async (client) => {
 				return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
 			},
 			"discord-relative": () => {
-				return `<t:${futureTimestamp}:R>`; // Discord's relative time format
+				return `<t:${futureTimestamp}:R>`;
 			},
 			"discord-date": () => {
-				return `<t:${futureTimestamp}:D>`; // Discord's date format
+				return `<t:${futureTimestamp}:D>`;
 			},
 			"discord-time": () => {
-				return `<t:${futureTimestamp}:T>`; // Discord's time format
+				return `<t:${futureTimestamp}:T>`;
 			},
 		};
 
@@ -788,5 +547,50 @@ module.exports = async (client) => {
 		throw new Error("Unsupported format");
 	};
 
+	client.hasVerifed = async(userId) => {
+		const data = await model.findOne(
+			{
+				User: userId
+			}
+		)
+	
+		if (!data) {
+			return 1;
+		} else
+		if (data && data.Verified) {
+			return 2;
+		} else
+		if (data && !data.Verfied) {
+			return 3;
+		} else {
+			return 0;
+		}
+	}
+
+	client.errorEmbed = (msg) => {
+		const embed = new Discord.EmbedBuilder()
+			.setTitle("An error occured")
+			.setThumbnail("https://cdn3.emoji.gg/emojis/9145-w98-decline.png")
+			.setDescription(msg)
+			.setColor("#F04848")
+			.setFooter(client.footer("Please contact dreamwxve about this error"))
+		
+		return embed;
+	};
+
+	client.verifyUser = async(user, guild) => {
+		const role = await guild.roles.fetch("1290474205975937134");
+		const x = {};
+		try {
+			await user.roles.add(role)
+			x.ok = true;
+			return x;
+			
+		} catch (e) {
+			x.ok = false;
+			x.e = e;
+			return x;
+		}
+	}
 	//====================================================================
 };
