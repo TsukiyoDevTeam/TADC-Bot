@@ -52,6 +52,33 @@ module.exports = async (client, interaction) => {
         )
         .setFooter(client.footer());
 
+        if (data.Note) {
+
+            const fields = [];
+            for (note of data.Note) {
+                const m = data.Note.Message;
+                const t = data.Note.Time;
+                const x = data.Note.User;
+                const u = interaction.guild.members.cache.get(x);
+
+                const field =
+                {
+                    name: `from: ${u.username}`,
+                    value: `> ${m}\n- <t:${t}:R>`,
+                    inline:false
+                }
+                fields.push(field)
+            }
+            const embed1 = new Discord.EmbedBuilder()
+                .setAuthor({
+                    name: "Moderator Notes",
+                    iconURL: user.displayAvatarURL({dynamic: true})
+                })
+                .addFields(fields)
+                .setFooter(client.footer())
+                .setColor("DarkButNotBlack")
+        }
+
         return interaction.reply({
             embeds: [embed],
             ephemeral: true
